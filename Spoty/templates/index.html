@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Spoty - Welcome</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <style>
+    /* Customizing link styles */
+    a,
+    a:focus,
+    a:hover {
+      color: #1DB954;
+      text-decoration: none;
+    }
+
+    /* Button customization */
+    .btn-custom,
+    .btn-custom:hover,
+    .btn-custom:focus {
+      color: #fff;
+      background-color: #1DB954;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      background-color: #1aa34a;
+    }
+
+    /* Base structure */
+    html,
+    body {
+      height: 100%;
+      background-color: #191414;
+    }
+
+    body {
+      display: -ms-flexbox;
+      display: flex;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .cover-container {
+      max-width: 42em;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #1DB954;
+    }
+
+    p.lead {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #flexparent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .now-playing {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .now-playing .bar {
+      display: inline-block;
+      margin-right: 2px;
+      width: 10px;
+      height: 1px;
+      background: #1DB954;
+      animation-name: pulse;
+      animation-duration: 1.5s;
+      animation-iteration-count: infinite;
+    }
+
+    .bar:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .bar:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .bar:nth-child(4) {
+      animation-delay: 0.6s;
+    }
+
+    .bar:nth-child(5) {
+      animation-delay: 0.8s;
+    }
+
+    @keyframes pulse {
+      0% {
+        height: 10px;
+      }
+
+      50% {
+        height: 50px;
+      }
+
+      100% {
+        height: 10px;
+      }
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      color: #1DB954;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="flexparent" class="cover-container">
+    <main role="main" class="inner cover">
+      <h1 class="cover-heading">Welcome to Spoty!</h1>
+      <p class="lead">Your ultimate music companion. Dive into endless tunes, personalized playlists, and seamless
+        listening. Let the rhythm guide you as you explore, enjoy, and vibe to your favorite sounds.</p>
+      <p class="lead">
+        <a href="{{ url_for('login') }}" class="btn btn-lg btn-custom">Login here</a>
+      </p>
+      <div class="now-playing" id="music">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Spoty Music, Inc.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

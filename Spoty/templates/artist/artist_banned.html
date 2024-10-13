@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banned Artist</title>
+    <style>
+        /* Reset some default styles */
+body, h1, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;  /* Light grey background */
+    color: #333;  /* Dark grey text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;  /* Full viewport height */
+}
+
+/* Heading styling */
+h1 {
+    font-size: 2.5em;  /* Larger font size for the heading */
+    color: #ff4d4d;  /* Red color for emphasis */
+    margin-bottom: 20px;  /* Space below the heading */
+}
+
+/* Paragraph styling */
+p {
+    font-size: 1.2em;  /* Slightly larger text for the paragraph */
+    margin-bottom: 20px;  /* Space below the paragraph */
+    text-align: center;  /* Center the text */
+    padding: 0 20px;  /* Padding on left and right */
+}
+
+/* Form styling */
+form {
+    background-color: #fff;  /* White background for the form */
+    padding: 20px;  /* Padding inside the form */
+    border-radius: 8px;  /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow effect */
+    width: 300px;  /* Fixed width for the form */
+}
+
+/* Textarea styling */
+textarea {
+    width: 100%;  /* Full width for the textarea */
+    padding: 10px;  /* Padding inside the textarea */
+    border: 1px solid #ccc;  /* Light grey border */
+    border-radius: 4px;  /* Rounded corners */
+    font-size: 1em;  /* Base font size */
+    resize: none;  /* Disable resizing */
+}
+
+/* Button styling */
+button {
+    background-color: #ff4d4d;  /* Red button */
+    color: white;  /* White text on button */
+    border: none;  /* No border */
+    padding: 10px 20px;  /* Padding inside the button */
+    border-radius: 4px;  /* Rounded corners */
+    cursor: pointer;  /* Pointer cursor on hover */
+    font-size: 1em;  /* Base font size */
+    transition: background-color 0.3s;  /* Smooth transition for hover effect */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #e60000;  /* Darker red on hover */
+}
+
+    </style>
+</head>
+
+<body>
+    <h1>Hi {{ artist_name }}, You have been banned</h1>
+    <p>If you believe this is a mistake, you can send a query to the admin for review.</p>
+
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('send_query') }}" method="POST">
+        <label for="query">Your Query:</label>
+        <textarea name="query" id="query" rows="4" required></textarea>
+        <button type="submit">Send Query</button>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/artist/styles/artist_dashboard.css">
+    <title>Artist Dashboard</title>
+</head>
+
+<body>
+    <header>
+        <div class="logosec">
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182541/Untitled-design-(30).png"
+                class="icn menuicn" id="menuicn" alt="menu-icon">
+        </div>
+        <div class="message">
+            <div class="dp">
+                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210180014/profile-removebg-preview.png"
+                    class="dpicn" alt="dp">
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="navcontainer">
+            <nav class="nav">
+                <div class="nav-upper-options">
+                    <div class="nav-option option2">
+                        <a href="{{ url_for('artist_dashboard') }}" class="nav-option option2">
+                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182148/Untitled-design-(29).png"
+                                class="nav-img" alt="dashboard">
+                            <h3>Songs</h3>
+                        </a>
+                    </div>
+
+                    <div class="option1 nav-option">
+                        <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png"
+                            class="nav-img" alt="articles">
+                        <h3>My Songs</h3>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="main">
+            <div class="report-container">
+                <div class="report-header">
+                    <h1 class="recent-Articles">My Songs</h1>
+                </div>
+
+                <div class="report-body">
+                    <!-- Add Song Form -->
+                    <div class="add-song-form">
+                        <form action="/add-song" method="POST" enctype="multipart/form-data">
+                            <input type="text" name="title" placeholder="Song Title" required>
+                            <input type="file" name="song_file" accept="audio/*" required>
+                            <button type="submit">Add Song</button>
+                        </form>
+                    </div>
+
+                    <ul id="audio-list" class="audio-list">
+                        {% for song in songs %}
+                        <li class="audio-item" id="audio-item-{{ song._id }}">
+                            <div class="audio-info">
+                                <p>Title: <span id="song-title-{{ song._id }}">{{ song.title }}</span></p>
+                                <div>
+                                    <button class="edit-icon" onclick="editSong('{{ song._id }}')">Edit</button>
+                                    <button class="delete-icon" onclick="deleteSong('{{ song._id }}')">Delete</button>
+                                </div>
+                            </div>
+                            <div class="audio-controls">
+                                <audio src="{{ song.src }}" id="audio-{{ song._id }}" controls></audio>
+                                <button onclick="playSong('audio-{{ song._id }}', this)">Play</button>
+                                <button onclick="skipSong('audio-{{ song._id }}')">Skip</button>
+                            </div>
+                            <div class="audio-progress">
+                                <input type="range" id="progress-{{ song._id }}" value="0" step="1" min="0" max="100">
+                                <span id="current-time-{{ song._id }}">0:00</span>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function playSong(audioId, button) {
+            const audioElement = document.getElementById(audioId);
+            if (audioElement.paused) {
+                audioElement.play();
+                button.textContent = "Pause";
+            } else {
+                audioElement.pause();
+                button.textContent = "Play";
+            }
+        }
+
+        function skipSong(audioId) {
+            const audioElement = document.getElementById(audioId);
+            audioElement.currentTime += 10; // Skip ahead by 10 seconds
+        }
+
+        function editSong(songId) {
+            const songTitleElement = document.getElementById(`song-title-${songId}`);
+            const newTitle = prompt("Enter new title", songTitleElement.textContent);
+            if (newTitle) {
+                fetch(`/edit-song/${songId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ new_title: newTitle })
+                }).then(response => {
+                    if (response.ok) {
+                        songTitleElement.textContent = newTitle;
+                    } else {
+                        alert("Error updating song title!");
+                    }
+                });
+            }
+        }
+
+        function deleteSong(songId) {
+        if (confirm("Are you sure you want to delete this song?")) {
+            fetch(`/delete-song/${songId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                if (response.ok) {
+                    // Remove the song element from the DOM
+                    const songElement = document.getElementById(`audio-item-${songId}`);
+                    songElement.remove();
+                    alert("Song deleted successfully!");
+                } else {
+                    alert("Error deleting song!");
+                }
+            });
+        }
+    }
+    </script>
+</body>
+</html>

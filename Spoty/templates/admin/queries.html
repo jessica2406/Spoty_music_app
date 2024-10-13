@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Queries</title>
+    <style>
+        .query-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.query-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+.query-info p {
+    margin: 5px 0;
+}
+
+    </style>
+</head>
+
+<body>
+    <h2>Artist Queries</h2>
+    <ul id="query-list" class="query-list">
+        {% for query in queries %}
+        <li class="query-card">
+            <div class="query-info">
+                <p>Artist Email: {{ query.artist_email }}</p>
+                <p>Query: {{ query.query }}</p>
+                <p>Status: {{ query.status }}</p>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% if queries|length == 0 %}
+        <p>No queries have been submitted yet.</p>
+    {% endif %}
+</body>
+
+</html>

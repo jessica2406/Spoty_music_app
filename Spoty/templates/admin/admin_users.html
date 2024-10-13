@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Spotify's dark background */
+            color: #ffffff; /* White text for contrast */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #1db954; /* Spotify's green */
+            overflow: hidden;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .navbar a {
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .navbar a.active {
+            background-color: #1aa34a; /* Slightly darker green */
+            color: white;
+        }
+
+        .logout-btn {
+            background-color: #dc3545; /* Red for logout */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+
+        /* Container and User List */
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #282828; /* Dark background for container */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1db954; /* Spotify's green */
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-card {
+            background-color: #181818; /* Darker card background */
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-actions button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .ban-btn {
+            background-color: #dc3545; /* Red for ban */
+        }
+
+        .ban-btn:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div>
+            <a href="#" class="active">User</a>
+            <a href="{{url_for('admin_artist')}}">Artist</a>
+        </div>
+        <!-- Logout Button -->
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>User List</h1>
+        <ul id="user-list" class="user-list">
+            {% for user in users %}
+            <li class="user-card">
+                <div class="user-info">
+                    <p>Name: {{user.name}}</p>
+                    <p>Email: {{user.email}}</p>
+                    <p>Phone: {{user.phone}}</p>
+                </div>
+                <div class="user-actions">
+                    <button class="ban-btn" data-user-email="{{user.email}}"
+                        onclick="banUser('{{user.email}}')">Ban</button>
+                </div>
+            </li>
+
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        async function logout() {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'GET',
+                });
+            } catch (error) {
+                console.error('Error during logout:', error);
+            }
+        }
+
+        async function banUser(userEmail) {
+            try {
+                const response = await fetch('/banUser', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ "userEmail": userEmail }),
+                });
+            } catch (error) {
+                console.error('Error during Ban:', error);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

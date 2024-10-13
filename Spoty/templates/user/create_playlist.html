@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Playlist</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #1DB954;  /* Spotify green */
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            color: #fff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 20px;
+            color: #121212;
+        }
+
+        input[type="submit"] {
+            background-color: #1DB954;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1ed760;
+        }
+
+        /* Song List Styles */
+        .song-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #1DB954;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #282828;
+        }
+
+        .song-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .song-list li {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .song-list label {
+            margin-left: 10px;
+        }
+
+        .song-list input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .song-list audio {
+            display: inline-block;
+            margin-left: 10px;
+            width: 200px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Create a New Playlist</h1>
+
+    <form method="POST">
+        <label for="playlist_name">Playlist Name:</label>
+        <input type="text" id="playlist_name" name="playlist_name" placeholder="Enter playlist name" required>
+
+        <label>Select Songs:</label>
+        <div class="song-list">
+            <ul>
+                {% if songs %}
+                {% for song in songs %}
+                <li>
+                    <input type="checkbox" name="selected_songs" value="{{ song.title }}|{{ song.src }}"> <!-- Include title in the value -->
+                    <label for="song-{{ loop.index }}">{{ song.title }} by {{ song.artist_name }}</label>
+                    <audio controls>
+                        <source src="{{ song.src }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </li>
+            {% endfor %}
+                {% else %}
+                    <p>No songs available at the moment.</p>
+                {% endif %}
+            </ul>
+        </div>
+
+        <input type="submit" value="Create Playlist">
+    </form>
+
+</body>
+</html>
+    

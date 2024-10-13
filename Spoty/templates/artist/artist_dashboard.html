@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/artist/styles/artist_dashboard.css">
+</head>
+
+<body>
+    <header>
+        <div class="logosec">
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182541/Untitled-design-(30).png"
+                class="icn menuicn" id="menuicn" alt="menu-icon">
+        </div>
+        <div class="message">
+            <div class="dp">
+                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210180014/profile-removebg-preview.png"
+                    class="dpicn" alt="dp">
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="navcontainer">
+            <nav class="nav">
+                <div class="nav-upper-options">
+                    <div class="nav-option option1">
+                        <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182148/Untitled-design-(29).png"
+                            class="nav-img" alt="dashboard">
+                        <h3>Songs</h3>
+                    </div>
+
+                    <div class="option2 nav-option">
+                        <a href="{{ url_for('artist_songs') }}">
+                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png"
+                                class="nav-img" alt="my-songs">
+                            <h3>My Songs</h3>
+                        </a>
+                    </div>
+
+                    <div class="nav-bar">
+                        <a href="/logout" class="nav-option logout">
+                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183321/7.png"
+                                class="nav-img" alt="logout">
+                            <h3>Logout</h3>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="main">
+            <!-- Notification if user is banned -->
+            {% if is_banned %}
+            <div class="banned-notification">
+                <h2 style="color: red;">Your account has been banned.</h2>
+                <p>If you believe this is a mistake, please contact the admin using the form below.</p>
+
+                <!-- Form to send a query to admin -->
+                <form action="{{ url_for('artist_send_query') }}" method="post">
+                    <label for="query">Your Query:</label>
+                    <textarea name="query" id="query" rows="4" required></textarea>
+                    <button type="submit">Send Query</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="searchbar2">
+                <input type="text" placeholder="Search">
+                <div class="searchbtn">
+                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210180758/Untitled-design-(28).png"
+                        class="icn srchicn" alt="search-button">
+                </div>
+            </div>
+
+            <div class="box-container">
+                <div class="box box1">
+                    <div class="text">
+                        <h2 class="topic-heading">60.5k</h2>
+                        <h2 class="topic">Article Views</h2>
+                    </div>
+                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210184645/Untitled-design-(31).png"
+                        alt="Views">
+                </div>
+
+                <div class="box box2">
+                    <div class="text">
+                        <h2 class="topic-heading">150</h2>
+                        <h2 class="topic">Likes</h2>
+                    </div>
+                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210185030/14.png" alt="likes">
+                </div>
+
+                <div class="box box3">
+                    <div class="text">
+                        <h2 class="topic-heading">320</h2>
+                        <h2 class="topic">Comments</h2>
+                    </div>
+                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210184645/Untitled-design-(32).png"
+                        alt="comments">
+                </div>
+
+                <div class="box box4">
+                    <div class="text">
+                        <h2 class="topic-heading">70</h2>
+                        <h2 class="topic">Published</h2>
+                    </div>
+                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210185029/13.png" alt="published">
+                </div>
+            </div>
+
+            <div class="report-container">
+                <div class="report-header">
+                    <h1 class="recent-Articles">Famous Songs</h1>
+                </div>
+
+                <div class="report-body">
+                    <ul id="audio-list" class="audio-list">
+                        {% for song in songs %}
+                        <li class="audio-item">
+                            <div class="audio-info">
+                                <p>Title: {{ song.title }}</p>
+                            </div>
+                            <div class="audio-controls">
+                                <audio src="{{ song.src }}" id="audio-{{ loop.index }}"></audio>
+                                <button onclick="playSong('audio-{{ loop.index }}', this)">Play</button>
+                                <button onclick="skipSong('audio-{{ loop.index }}')">Skip</button>
+                            </div>
+                            <div class="audio-progress">
+                                <input type="range" id="progress-{{ loop.index }}" value="0" step="1" />
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="artist_dashboard.js"></script>
+</body>
+
+</html>

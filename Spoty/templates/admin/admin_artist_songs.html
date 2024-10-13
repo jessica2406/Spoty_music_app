@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Library</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #121212; /* Spotify dark background */
+            margin: 0;
+            padding: 0;
+            color: white; /* White text for better contrast */
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #1DB954; /* Spotify green */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar h3 {
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FFFFFF;
+            margin-bottom: 20px; /* Space below the heading */
+        }
+
+        .audio-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .audio-item {
+            background-color: #282828; /* Darker item background */
+            margin: 10px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .audio-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .audio-info p {
+            margin: 5px 0;
+            color: #B3B3B3; /* Lighter text color for less emphasis */
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .audio-controls button {
+            background-color: #1DB954; /* Spotify green for buttons */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .audio-controls button:hover {
+            background-color: #1ed760; /* Slightly lighter green on hover */
+        }
+
+        .audio-progress {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .audio-progress input {
+            flex: 1;
+            margin: 0 10px;
+            cursor: pointer;
+            background: transparent; /* Transparent background */
+            
+            height: 5px; /* Slider height */
+            border-radius: 5px; /* Round slider */
+        }
+
+        .audio-progress input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px; /* Thumb width */
+            height: 15px; /* Thumb height */
+            background: #1DB954; /* Thumb color */
+            border-radius: 50%; /* Round thumb */
+        }
+
+        .audio-progress input::-moz-range-thumb {
+            width: 15px; /* Thumb width */
+            height: 15px; /* Thumb height */
+            background: #1DB954; /* Thumb color */
+            border-radius: 50%; /* Round thumb */
+        }
+
+        audio {
+            display: none; /* Hide audio element */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <h3>Your Library</h3>
+    </div>
+
+    <div class="container">
+        <h1>Artist Audio Library</h1>
+        <ul id="audio-list" class="audio-list">
+            {% for song in songs %}
+            <li class="audio-item">
+                <div class="audio-info">
+                    <p>Title: {{ song.title }}</p>
+                </div>
+                <div class="audio-controls">
+                    <audio src="{{ song.src }}" id="audio-{{ loop.index }}"></audio>
+                    <button onclick="playSong('audio-{{ loop.index }}', this)">Play</button>
+                    <button onclick="skipSong('audio-{{ loop.index }}')">Skip</button>
+                </div>
+                <div class="audio-progress">
+                    <input type="range" id="progress-{{ loop.index }}" value="0" step="1" min="0" max="100">
+                    <span id="current-time-{{ loop.index }}">0:00</span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // Function to play/pause the song
+        function playSong(audioId, button) {
+            const audio = document.getElementById(audioId);
+            if (audio.paused) {
+                audio.play();
+                button.textContent = 'Pause';
+                startTimer(audioId, audio);
+            } else {
+                audio.pause();
+                button.textContent = 'Play';
+            }
+        }
+
+        // Function to skip the song
+        function skipSong(audioId) {
+            const audio = document.getElementById(audioId);
+            audio.currentTime = audio.duration; // Skip to the end
+            audio.pause();
+            document.querySelector(`button[onclick="playSong('${audioId}', this)"]`).textContent = 'Play';
+        }
+
+        // Function to update the progress of the song
+        function startTimer(audioId, audio) {
+            const progress = document.getElementById(`progress-${audioId.split('-')[1]}`);
+            const currentTimeDisplay = document.getElementById(`current-time-${audioId.split('-')[1]}`);
+
+            // Update the progress bar every second
+            const interval = setInterval(() => {
+                if (audio.ended) {
+                    clearInterval(interval);
+                    progress.value = 0;
+                    currentTimeDisplay.textContent = "0:00";
+                } else {
+                    const currentTime = audio.currentTime;
+                    const duration = audio.duration;
+                    progress.value = (currentTime / duration) * 100;
+                    currentTimeDisplay.textContent = formatTime(currentTime);
+                }
+            }, 1000);
+
+            // Update progress when user interacts with the range input
+            progress.addEventListener('input', () => {
+                const newTime = (progress.value / 100) * audio.duration;
+                audio.currentTime = newTime;
+            });
+        }
+
+        // Format time in MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' + secs : secs}`;
+        }
+    </script>
+
+</body>
+
+</html>

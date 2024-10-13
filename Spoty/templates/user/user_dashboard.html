@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;  /* Spotify black background */
+            color: #fff;  /* White text */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            background-color: #282828;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+
+        .sidebar h2 {
+            color: #1DB954; /* Spotify green */
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .playlist-list ul, .artist-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .playlist-list li, .artist-list li {
+            margin-bottom: 10px;
+        }
+
+        .playlist-list a, .artist-list a {
+            color: #fff;
+            text-decoration: none;
+            background-color: #1DB954;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .playlist-list a:hover, .artist-list a:hover {
+            background-color: #1ed760;
+        }
+
+        /* Main content */
+        .main-content {
+            flex-grow: 1;
+        }
+
+        /* Rest of your previous styles for the dashboard */
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #282828;
+        }
+
+        h1 {
+            color: #1DB954;  /* Spotify green */
+            font-size: 2rem;
+        }
+
+        .logout-link {
+            color: #fff;
+            background-color: #1DB954;  /* Spotify green */
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-link:hover {
+            background-color: #1ed760;  /* Lighter green on hover */
+        }
+
+        /* Song section */
+        .song-section {
+            margin-top: 20px;
+        }
+
+        .song-section h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        /* Song list */
+        .song-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .song-list li {
+            background-color: #282828;  /* Dark grey song card */
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .song-list li:hover {
+            transform: scale(1.02);
+        }
+
+        .song-list h3 {
+            color: #1DB954;  /* Spotify green */
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .song-list p {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Audio player */
+        .song-list audio {
+            width: 100%;
+            background-color: #121212;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        /* Song controls */
+        .song-controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .control-btn {
+            background-color: #1DB954;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .control-btn:hover {
+            background-color: #1ed760;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Your Playlists</h2>
+        <div class="playlist-list">
+            <ul>
+                {% if playlists %}
+                    {% for playlist in playlists %}
+                        <li><a href="/playlist/{{ playlist._id }}">{{ playlist.name }}</a></li>
+                    {% endfor %}
+                {% else %}
+                    <li>No playlists found.</li>
+                {% endif %}
+            </ul>
+        </div>
+    
+        <h2>Artists</h2>
+        <div class="artist-list">
+            <ul>
+                {% if artists %}
+                    {% for artist in artists %}
+                        <li><a href="{{ url_for('artist_page', artist_id=artist._id) }}">{{ artist.name }}</a></li>
+                    {% endfor %}
+                {% else %}
+                    <li>No artists found.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    
+
+    <div class="main-content">
+        <div class="dashboard">
+            <h1>Welcome to Spoty, {{ user_name }}</h1>
+            <a class="logout-link" href="/logout">Logout</a>
+        </div>
+
+        <!-- Playlist Creation Section -->
+        <a href="/create_playlist" class="playlist-create">Create Playlist</a>
+
+        <div class="song-section">
+            <h2>Available Songs</h2>
+            <div class="song-list" id="song-list">
+                {% if songs %}
+                    <ul>
+                        {% for song in songs %}
+                            <li data-artist-id="{{ song.artist_id }}" class="song-item">
+                                <h3>{{ song.title }}</h3>
+                                <p>Artist: {{ song.artist_name }}</p> <!-- Display artist name -->
+                                <audio id="audio-{{ loop.index }}" controls {% if loop.first %}autoplay{% endif %}>
+                                    <source src="{{ song.src }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- Song Controls -->
+                    <div class="song-controls">
+                        <button id="prev-btn" class="control-btn">Previous</button>
+                        <button id="shuffle-btn" class="control-btn">Shuffle</button>
+                        <button id="next-btn" class="control-btn">Next</button>
+                    </div>
+
+                {% else %}
+                    <p>No songs available at the moment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSongIndex = 0;
+        const songs = document.querySelectorAll('audio');
+        
+        // Play the next song
+        document.getElementById('next-btn').addEventListener('click', () => {
+            songs[currentSongIndex].pause();
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            songs[currentSongIndex].play();
+        });
+
+        // Play the previous song
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            songs[currentSongIndex].pause();
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            songs[currentSongIndex].play();
+        });
+
+        // Shuffle songs
+        document.getElementById('shuffle-btn').addEventListener('click', () => {
+            songs[currentSongIndex].pause();
+            currentSongIndex = Math.floor(Math.random() * songs.length);
+            songs[currentSongIndex].play();
+        });
+
+        // Automatically move to the next song when the current one ends
+        songs.forEach((song, index) => {
+            song.addEventListener('ended', () => {
+                currentSongIndex = (index + 1) % songs.length;
+                songs[currentSongIndex].play();
+            });
+        });
+
+        // Handle artist click to show their songs
+        const artistLinks = document.querySelectorAll('.artist-link');
+        artistLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default link behavior
+                const artistId = link.getAttribute('data-artist-id');
+                // Call a function to load the artist's songs
+                loadArtistSongs(artistId);
+            });
+        });
+
+        function loadArtistSongs(artistId) {
+            // Fetch songs for the artist (you need to implement this logic on your backend)
+            // Example:
+            fetch(`/api/artist/${artistId}/songs`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear current song list
+                    const songList = document.getElementById('song-list');
+                    songList.innerHTML = '';
+                    // Populate with artist's songs
+                    data.songs.forEach(song => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<h3>${song.title}</h3><p>Artist: ${song.artist_name}</p>
+                            <audio controls><source src="${song.src}" type="audio/mpeg"></audio>`;
+                        songList.appendChild(li);
+                    });
+                })
+                .catch(err => console.error('Error fetching artist songs:', err));
+        }
+    </script>
+</body>
+</html>
